@@ -107,3 +107,38 @@ server; the order message carries it.
    Төлбөр баталгаажсан (100%) → Бэлтгэж байна → Хүргэлтэд гарсан / Авахад бэлэн → Хүргэгдсэн, plus «Цуцлагдсан» and
    «Солилт».
 3. **Frontline → Forms → (order form) → Settings**: create a sales card in «Шинэ захиалга» for every submission.
+
+## 1.5 Test order from cart to receipt
+
+**Verified on a local production build:** `npm run test:order -- http://localhost:3144` passes **26 checks**: empty cart,
+unknown product, an option on a product without options, sold-out, more than the stock, no minimum (one cheap
+item), city + 7,000₮, free from 150,000₮, express and countryside (fee null), pick-up (0₮, no address), address
+required, QPay accepted, bank transfer and unknown payment rejected, unknown delivery, company registry rejected and
+accepted, phone (incl. +976), email, quantity over 10, the browser's price ignored, honeypot. Without erxes the order
+returns `503 not_configured` and the checkout shows the phone number, the reference (`AN-YYMMDD-XXXX`) and the total.
+
+Steps for a real test order:
+
+1. **Frontline → Forms → Create** «Вэбсайт захиалга» with fields Нэр, Утас, Имэйл, Захиалга. Copy the form id and
+   the field ids.
+2. In Vercel set `ERXES_API_URL`, `ERXES_ORDER_FORM_ID`, `ERXES_ORDER_FIELD_IDS`, then redeploy.
+3. Run `npm run test:order -- https://anen-web.vercel.app --send`. The script prints the expected total (two items +
+   7,000₮ city delivery).
+4. In erxes: find the submission and its card → send the QPay invoice and pay it → issue the eBarimt → move the card
+   to «Хүргэгдсэн» → void the test order.
+
+---
+
+## Open questions for anen store
+
+1. **Express delivery fee**: Zochil says «нэмэлт төлбөртэй» without an amount. What is it?
+2. **Countryside**: enabled on Zochil without a fee. How is it sent and who pays the bus?
+3. **QPay merchant** outside Zochil: credentials for erxes.
+4. **TIN / PosAPI** for eBarimt.
+5. **0₮ product** «Innisfree No-Sebum Mineral Powder»: real price?
+6. **Product types guessed** for 14 products and **brands** read from names for 62: check the CSV.
+7. **«Laneige travel set»** has no photo; **«Torriden travel set»** has no stock count.
+8. **Skin concerns** are read from names / descriptions: should staff tag them in erxes instead?
+9. **Duplicate-looking items** (two Catrice foundations named «-Copy» on Zochil, now №10/№20/№30): confirm they are
+   separate shades.
+10. **Domain**: point anenbeauty.mn at the new site when ready.
