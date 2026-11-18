@@ -83,3 +83,27 @@ Zochil has no eBarimt setting for this shop (`vat_enabled` is off on every produ
 
 Website (done): checkout asks «Хувь хүн» or «Байгууллага»; a company needs a 7-digit registry number, validated on the
 server; the order message carries it.
+
+## 1.4 Delivery zones, fees and order statuses
+
+**Website (done)**, from Zochil shop 37746:
+
+| Option | Fee | Rule |
+| --- | --- | --- |
+| Улаанбаатар · бүх бүс | 7,000₮, free from 150,000₮ | Before 10:00 same day 14:00–22:00, after 10:00 next day 14:00–22:00 |
+| Шуурхай хүргэлт | told by phone | 2–5 hours, extra charge (amount not on Zochil) |
+| Орон нутаг | told by phone | Countryside is enabled on Zochil but has no fee |
+| Дэлгүүрээс очиж авах | 0₮ | Pick-up is enabled on Zochil. Yarmag, Shunshig villa 3, 1st floor, 11:00–20:00 |
+
+- No order minimum on Zochil. Timed delivery is not possible (Zochil rule).
+- Exchange: a faulty product is exchanged 100%; no returns for allergic reactions (Zochil terms). Shown on product
+  pages and `/info`.
+
+**erxes (manual):**
+
+1. Import `docs/erxes/anen-delivery.csv`: services `DELIVERY-CITY` (7,000₮; staff set 0₮ from 150,000₮),
+   `DELIVERY-EXPRESS` (no price), `DELIVERY-COUNTRYSIDE` (no price), `PICKUP-STORE` (0₮).
+2. **Sales → Boards → «Онлайн захиалга» → pipeline «Вэбсайт»**, stages: Шинэ захиалга → Төлбөр хүлээгдэж буй →
+   Төлбөр баталгаажсан (100%) → Бэлтгэж байна → Хүргэлтэд гарсан / Авахад бэлэн → Хүргэгдсэн, plus «Цуцлагдсан» and
+   «Солилт».
+3. **Frontline → Forms → (order form) → Settings**: create a sales card in «Шинэ захиалга» for every submission.
