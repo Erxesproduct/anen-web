@@ -72,3 +72,14 @@ the order is confirmed only after 100% payment. erxes 3.0 has a QPay payment kin
 
 Website (done): checkout offers **QPay** only, validated on the server (bank transfer, StorePay and anything else are
 rejected). The browser's prices are ignored; the server prices every line from the catalog.
+
+## 1.3 eBarimt setup
+
+Zochil has no eBarimt setting for this shop (`vat_enabled` is off on every product).
+
+1. Collect from anen store: company TIN, district code (СБД), VAT status, product classification code (cosmetics).
+2. Register for **PosAPI 3.0** (ebarimt.mn → Business → PosAPI) and install the PosAPI service.
+3. **Settings → eBarimt → Add**: PosAPI URL, TIN, district code, VAT switches; assign it to the website pipeline.
+
+Website (done): checkout asks «Хувь хүн» or «Байгууллага»; a company needs a 7-digit registry number, validated on the
+server; the order message carries it.
