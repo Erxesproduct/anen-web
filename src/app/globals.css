@@ -1,0 +1,425 @@
+@import "tailwindcss";
+
+/*
+ * «Soft Bloom»: the ANEN banner turned into a shop. Warm porcelain paper with leaf shadows drifting across it, the
+ * logo's heart wreath, its two pinks (a bright rose for the monogram, a dusty mauve for the leaves), a deep plum-brown
+ * for type. Engraved serif capitals like the wordmark, airy sans for reading, a little script for Latin flourishes.
+ * Motion is slow and quiet: petals rising, leaves swaying, things fading up as you scroll.
+ */
+@theme {
+  --color-porcelain: #fbf7f5;
+  --color-blush: #f8e9ec;
+  --color-petal: #f2d4dc;
+  --color-rose: #d81b6a;
+  --color-rose-deep: #a8114f;
+  --color-mauve: #c56f8b;
+  --color-ink: #3a2630;
+  --color-ink-2: #6b5560;
+  --color-mute: #9c8891;
+  --color-line: #eedfe3;
+  --color-sage: #a6b49f;
+  --color-champagne: #ead9c6;
+
+  --font-display: var(--nf-display), "Forum", Georgia, serif;
+  --font-sans: var(--nf-sans), "Raleway", system-ui, sans-serif;
+  --font-script: var(--nf-script), "Great Vibes", cursive;
+}
+
+:root {
+  --rose: #d81b6a;
+  --mauve: #c56f8b;
+  --ink: #3a2630;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    background: var(--color-porcelain);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.65;
+    font-feature-settings: "lnum";
+  }
+  ::selection {
+    background: var(--color-petal);
+    color: var(--color-rose-deep);
+  }
+  .grid > * {
+    min-width: 0;
+  }
+  :focus-visible {
+    outline: 2px solid var(--rose);
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .wrap {
+    margin-inline: auto;
+    width: 100%;
+    max-width: 1240px;
+    padding-inline: 16px;
+  }
+  @media (min-width: 768px) {
+    .wrap {
+      padding-inline: 32px;
+    }
+  }
+  .display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+    line-height: 1.04;
+  }
+  .script {
+    font-family: var(--font-script);
+    font-weight: 400;
+    line-height: 1;
+  }
+  .kicker {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+  }
+  /* «— skincare & beauty —» */
+  .ruled {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .ruled::before,
+  .ruled::after {
+    content: "";
+    width: 2.2rem;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.45;
+  }
+  .card {
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: 0 1px 0 rgb(58 38 48 / 0.03), 0 18px 40px -28px rgb(58 38 48 / 0.35);
+  }
+  .veil {
+    background: rgb(255 255 255 / 0.66);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border: 1px solid rgb(255 255 255 / 0.85);
+  }
+  /* soft arch photo frame */
+  .arch {
+    position: relative;
+    overflow: hidden;
+    border-radius: 50% 50% 28px 28px / 38% 38% 28px 28px;
+    background: #fff;
+  }
+  .frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 24px;
+    background: #fff;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 50px;
+    padding: 0 1.7rem;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition:
+      background-color 0.35s,
+      color 0.35s,
+      box-shadow 0.35s,
+      transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+  }
+  .btn:active {
+    transform: translateY(0) scale(0.985);
+  }
+  .btn-rose {
+    background: var(--rose);
+    color: #fff;
+    box-shadow: 0 14px 30px -16px rgb(216 27 106 / 0.75);
+  }
+  .btn-rose:hover {
+    background: var(--color-rose-deep);
+  }
+  .btn-ink {
+    background: var(--ink);
+    color: #fff;
+  }
+  .btn-ink:hover {
+    background: #26161e;
+  }
+  .btn-line {
+    border: 1px solid rgb(58 38 48 / 0.25);
+    color: var(--ink);
+    background: rgb(255 255 255 / 0.55);
+  }
+  .btn-line:hover {
+    border-color: var(--rose);
+    color: var(--rose);
+    background: #fff;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 38px;
+    padding: 0 1rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.8);
+    border: 1px solid var(--color-line);
+    font-size: 13.5px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition:
+      border-color 0.25s,
+      background-color 0.25s,
+      color 0.25s;
+  }
+  .chip:hover {
+    border-color: var(--mauve);
+    color: var(--color-rose-deep);
+  }
+  .chip[aria-current="true"],
+  .chip[aria-pressed="true"],
+  .chip[aria-checked="true"] {
+    border-color: var(--rose);
+    background: var(--rose);
+    color: #fff;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    border-radius: 999px;
+    padding: 0.15rem 0.65rem;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.6;
+  }
+  .scroller {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(168px, 236px);
+    gap: 18px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    padding: 4px 4px 18px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-petal) transparent;
+  }
+  .scroller > * {
+    scroll-snap-align: start;
+  }
+  .prose-soft p,
+  .prose-soft li {
+    margin-top: 0.6em;
+    color: var(--color-ink-2);
+    line-height: 1.8;
+  }
+  .prose-soft li {
+    position: relative;
+    padding-left: 1.5em;
+  }
+  .prose-soft li::before {
+    content: "";
+    position: absolute;
+    left: 0.1em;
+    top: 0.62em;
+    width: 0.62em;
+    height: 0.62em;
+    background: var(--mauve);
+    /* a tiny leaf */
+    border-radius: 0 70% 0 70%;
+    transform: rotate(-10deg);
+  }
+
+  /* ---- motion ------------------------------------------------------------------------------------------------ */
+  .reveal-armed {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(4px);
+  }
+  .reveal-armed.reveal-in {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition:
+      opacity 1.1s ease var(--d, 0ms),
+      transform 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) var(--d, 0ms),
+      filter 1.1s ease var(--d, 0ms);
+  }
+  .fade-in {
+    animation: fade 0.7s ease both;
+  }
+  .rise {
+    animation: rise 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+    animation-delay: var(--d, 0ms);
+  }
+  .bloom {
+    animation: bloom 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .breathe {
+    animation: breathe 6s ease-in-out infinite;
+  }
+  .sway {
+    transform-origin: 30% 0%;
+    animation: sway var(--t, 11s) ease-in-out infinite alternate;
+  }
+  .petal {
+    position: absolute;
+    bottom: -40px;
+    width: var(--s, 14px);
+    height: calc(var(--s, 14px) * 0.8);
+    border-radius: 0 80% 0 80%;
+    background: linear-gradient(135deg, #f7c6d4, #e98aa8);
+    opacity: 0;
+    animation: petal var(--t, 16s) linear infinite;
+    animation-delay: var(--d, 0s);
+    pointer-events: none;
+  }
+  .shimmer {
+    background: linear-gradient(100deg, var(--rose) 20%, #f39abb 45%, var(--rose) 70%);
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 7s ease-in-out infinite;
+  }
+  .marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 60s linear infinite;
+  }
+  .marquee:hover {
+    animation-play-state: paused;
+  }
+  .lift {
+    transition:
+      transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.6s;
+  }
+  .lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 30px 50px -34px rgb(168 17 79 / 0.45);
+  }
+  .zoom img {
+    transition: transform 1.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .group:hover .zoom img {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes bloom {
+  from {
+    opacity: 0;
+    transform: scale(0.82) rotate(-6deg);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.035);
+  }
+}
+@keyframes sway {
+  from {
+    transform: rotate(-4deg) translate3d(-10px, 0, 0);
+  }
+  to {
+    transform: rotate(5deg) translate3d(14px, 8px, 0);
+  }
+}
+@keyframes petal {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  10% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--x, 60px), -110vh, 0) rotate(540deg);
+  }
+}
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 100% 0;
+  }
+  50% {
+    background-position: 0 0;
+  }
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .petal {
+    display: none;
+  }
+}
