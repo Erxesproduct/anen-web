@@ -1,0 +1,144 @@
+# anen store (ANEN skincare & beauty): erxes manual steps
+
+Owner of every step below: **Terbish**, with anen store for credentials and decisions.
+
+These steps happen inside the erxes 3.0 admin, not in code. The website reads the results through the environment
+variables in `.env.example`. Never commit their values.
+
+| Task | Status | What to do in erxes (admin path) |
+| --- | --- | --- |
+| [1.1] Import products, categories, prices | website done · manual import in erxes | Section 1.1 |
+| [1.2] Payment setup (QPay) | website done · manual, blocked on QPay merchant credentials | Section 1.2 |
+| [1.3] eBarimt setup | website done · manual, blocked on PosAPI registration + TIN | Section 1.3 |
+| [1.4] Delivery zones, fees, order statuses | website done · manual in erxes; express fee to confirm | Section 1.4 |
+| [1.5] Test order from cart to receipt | validation verified · real order blocked on erxes env vars + 1.2 + 1.3 | Section 1.5 |
+
+There is no erxes instance for anen store yet ("erxes 3.0: NOT SET"). Create it first, then add the env vars under
+**Vercel → anen-web → Settings → Environment Variables**.
+
+---
+
+## 1.1 Import products, categories and prices
+
+Source: anenbeauty.mn (Zochil shop 37746), scraped 2026-11-18: **190 products**, 66 Zochil categories (a «Брэнд» tree
+and a «Бүтээгдэхүүний төрөл» tree), the logo, 1 home banner, the About text and the terms. The Facebook page
+(«AnEn's shop», profile 100023497105360) gives no content without a login beyond its name and profile photo.
+
+The website imports **189 products**. «Innisfree No-Sebum Mineral Powder» (id 981363) is priced **0₮** on Zochil
+and is left out.
+
+- **Brands:** 51, from the Zochil brand categories and, for the 62 products that have none, from the start of the
+  name (Klavuu, Jayjun, Isntree, Etude, Catrice…). Every product has a brand.
+- **Types:** 22 Zochil product types, grouped into 7 routine steps (Цэвэрлэх, Тэнцвэржүүлэх, Тэжээх, Чийгшүүлэх,
+  Хамгаалах, Будалт, Үс/бие/сэт). 14 products had no type on Zochil; the build guessed it from the name
+  (shampoo → hair, mask, set → travel set, cream…).
+- **Skin concerns** (website filter only): Тайвшруулах, Чийгшүүлэх, Гэрэлтүүлэх, Уян чанар, Батга/нүх сүв, Хамгаалах
+  давхарга, read from names and descriptions (cica, hyaluronic, vitamin C, collagen/PDRN/retinol, azelaic/BHA,
+  ceramide). 31 products match none.
+- **Names:** ALL-CAPS Zochil names are written in Title Case, brand names unified (Dr.Althea, Dr.Jart+, Round Lab),
+  shade numbers shortened (Catrice «…Foundation №20»). The original name is kept in the CSV column `zochilName`.
+- **Prices:** 53 products are on sale on Zochil (sale price is the price, the old price is `compareAtPrice`).
+
+Files:
+
+- `docs/erxes/anen-categories.csv`: **30 rows**, parent `AN`, steps `AN-<step>`, types `AN-<type>`.
+- `docs/erxes/anen-products.csv`: **189 rows**, code `AN-<zochilId>`, name, main type category, other type categories,
+  price, old price, brand, concerns, stock, status, bestseller flag, the Zochil name, description, photo paths.
+
+Steps:
+
+1. **Products & services → Categories**: import `anen-categories.csv` (parents first: it is already ordered).
+2. **Settings → Import & Export → Import → Products**: upload `anen-products.csv`. Map `code → Code`,
+   `name → Name`, `categoryCode → Category code`, `unitPrice → Unit price`, `type → Type`, `uom → UOM`,
+   `description → Description`. Add the brand as a tag or a custom field. Keep the codes: the website and
+   `npm run sync:erxes` match on them.
+3. **Inventories → Remainders**: Zochil stock, 1,736 units; **28 products are sold out** (hidden on the site by
+   default) and 1 («Torriden travel set») is not tracked.
+4. Upload the photos (`public/images/p/*.webp`) on the products. **«Laneige travel set» has no photo** on Zochil (the
+   site shows an «ANEN» placeholder).
+5. Run `npm run sync:erxes` once with a Client Portal token (`ERXES_APP_TOKEN`) to confirm the codes match (it also
+   refreshes `src/data/lite.json`, which the cart reads).
+
+## 1.2 Payment setup (QPay)
+
+Zochil: QPay (`qpay2`, Khan Bank) is the shop's only payment method and is connected (`has_qpay: true`). Payment rule:
+the order is confirmed only after 100% payment. erxes 3.0 has a QPay payment kind
+(`backend/plugins/payment_api/src/constants.ts`).
+
+1. Get anen store's QPay merchant credentials (`client_id`, `client_secret`, `invoice_code`); ask QPay / Zochil
+   whether the existing merchant can be used outside Zochil. Owner: Terbish / anen store.
+2. **Settings → Payments → Add → QPay**: enter them. **Settings → Payments → (QPay) → Test**: a 100₮ invoice.
+3. **Sales → Pipelines → «Вэбсайт» → Settings → Payments**: select QPay.
+
+Website (done): checkout offers **QPay** only, validated on the server (bank transfer, StorePay and anything else are
+rejected). The browser's prices are ignored; the server prices every line from the catalog.
+
+## 1.3 eBarimt setup
+
+Zochil has no eBarimt setting for this shop (`vat_enabled` is off on every product).
+
+1. Collect from anen store: company TIN, district code (СБД), VAT status, product classification code (cosmetics).
+2. Register for **PosAPI 3.0** (ebarimt.mn → Business → PosAPI) and install the PosAPI service.
+3. **Settings → eBarimt → Add**: PosAPI URL, TIN, district code, VAT switches; assign it to the website pipeline.
+
+Website (done): checkout asks «Хувь хүн» or «Байгууллага»; a company needs a 7-digit registry number, validated on the
+server; the order message carries it.
+
+## 1.4 Delivery zones, fees and order statuses
+
+**Website (done)**, from Zochil shop 37746:
+
+| Option | Fee | Rule |
+| --- | --- | --- |
+| Улаанбаатар · бүх бүс | 7,000₮, free from 150,000₮ | Before 10:00 same day 14:00–22:00, after 10:00 next day 14:00–22:00 |
+| Шуурхай хүргэлт | told by phone | 2–5 hours, extra charge (amount not on Zochil) |
+| Орон нутаг | told by phone | Countryside is enabled on Zochil but has no fee |
+| Дэлгүүрээс очиж авах | 0₮ | Pick-up is enabled on Zochil. Yarmag, Shunshig villa 3, 1st floor, 11:00–20:00 |
+
+- No order minimum on Zochil. Timed delivery is not possible (Zochil rule).
+- Exchange: a faulty product is exchanged 100%; no returns for allergic reactions (Zochil terms). Shown on product
+  pages and `/info`.
+
+**erxes (manual):**
+
+1. Import `docs/erxes/anen-delivery.csv`: services `DELIVERY-CITY` (7,000₮; staff set 0₮ from 150,000₮),
+   `DELIVERY-EXPRESS` (no price), `DELIVERY-COUNTRYSIDE` (no price), `PICKUP-STORE` (0₮).
+2. **Sales → Boards → «Онлайн захиалга» → pipeline «Вэбсайт»**, stages: Шинэ захиалга → Төлбөр хүлээгдэж буй →
+   Төлбөр баталгаажсан (100%) → Бэлтгэж байна → Хүргэлтэд гарсан / Авахад бэлэн → Хүргэгдсэн, plus «Цуцлагдсан» and
+   «Солилт».
+3. **Frontline → Forms → (order form) → Settings**: create a sales card in «Шинэ захиалга» for every submission.
+
+## 1.5 Test order from cart to receipt
+
+**Verified on a local production build:** `npm run test:order -- http://localhost:3144` passes **26 checks**: empty cart,
+unknown product, an option on a product without options, sold-out, more than the stock, no minimum (one cheap
+item), city + 7,000₮, free from 150,000₮, express and countryside (fee null), pick-up (0₮, no address), address
+required, QPay accepted, bank transfer and unknown payment rejected, unknown delivery, company registry rejected and
+accepted, phone (incl. +976), email, quantity over 10, the browser's price ignored, honeypot. Without erxes the order
+returns `503 not_configured` and the checkout shows the phone number, the reference (`AN-YYMMDD-XXXX`) and the total.
+
+Steps for a real test order:
+
+1. **Frontline → Forms → Create** «Вэбсайт захиалга» with fields Нэр, Утас, Имэйл, Захиалга. Copy the form id and
+   the field ids.
+2. In Vercel set `ERXES_API_URL`, `ERXES_ORDER_FORM_ID`, `ERXES_ORDER_FIELD_IDS`, then redeploy.
+3. Run `npm run test:order -- https://anen-web.vercel.app --send`. The script prints the expected total (two items +
+   7,000₮ city delivery).
+4. In erxes: find the submission and its card → send the QPay invoice and pay it → issue the eBarimt → move the card
+   to «Хүргэгдсэн» → void the test order.
+
+---
+
+## Open questions for anen store
+
+1. **Express delivery fee**: Zochil says «нэмэлт төлбөртэй» without an amount. What is it?
+2. **Countryside**: enabled on Zochil without a fee. How is it sent and who pays the bus?
+3. **QPay merchant** outside Zochil: credentials for erxes.
+4. **TIN / PosAPI** for eBarimt.
+5. **0₮ product** «Innisfree No-Sebum Mineral Powder»: real price?
+6. **Product types guessed** for 14 products and **brands** read from names for 62: check the CSV.
+7. **«Laneige travel set»** has no photo; **«Torriden travel set»** has no stock count.
+8. **Skin concerns** are read from names / descriptions: should staff tag them in erxes instead?
+9. **Duplicate-looking items** (two Catrice foundations named «-Copy» on Zochil, now №10/№20/№30): confirm they are
+   separate shades.
+10. **Domain**: point anenbeauty.mn at the new site when ready.

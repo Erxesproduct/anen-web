@@ -1,0 +1,31 @@
+code,name,parentCode,productCount
+AN,ANEN skincare & beauty,,189
+AN-cleanse,Цэвэрлэх,AN,26
+AN-tone,Тэнцвэржүүлэх,AN,40
+AN-treat,Тэжээх,AN,22
+AN-care,Чийгшүүлэх,AN,29
+AN-protect,Хамгаалах,AN,20
+AN-makeup,Будалт,AN,40
+AN-more,"Үс, бие, сэт",AN,14
+AN-eye-care,"Нүдний тос, маск",AN-care,4
+AN-cream,Чийгшүүлэгч тос,AN-care,14
+AN-mask,Маск,AN-care,11
+AN-sun,Нарны тос,AN-protect,20
+AN-essence,Эссэнц,AN-treat,1
+AN-serum,Серум,AN-treat,14
+AN-ampoule,Ампуль,AN-treat,2
+AN-toner,Тонер,AN-tone,7
+AN-cleansing-oil,"Цэвэрлэгч тос, ус",AN-cleanse,9
+AN-peeling,Гуужуулагч,AN-cleanse,3
+AN-primer,"Праймер, суурь",AN-makeup,2
+AN-mist,Мист,AN-tone,14
+AN-cushion,"Күшион, тональ",AN-makeup,27
+AN-contour,"Контур, хацрын будаг",AN-makeup,2
+AN-cleanser,Нүүр угаагч,AN-cleanse,14
+AN-eye-makeup,"Сормуус, зовхи, хөмсөг",AN-makeup,4
+AN-lip,Уруулын будаг,AN-makeup,2
+AN-travel,Аялалын сэт,AN-more,10
+AN-pad,Пад,AN-tone,19
+AN-powder,Пудр,AN-makeup,3
+AN-booster,Booster shot,AN-treat,6
+AN-hair-body,"Үс, бие",AN-more,4
